@@ -49,9 +49,7 @@ current_floor = 5
 dawn_list = []
 up_list = []
 def up_or_down(destination_list, current_floor):
-    print(destination_list)
-    
-        
+    print(destination_list)        
     if current_floor in destination_list:
         destination_list = sorted(passanger_out(destination_list, current_floor))
     else:

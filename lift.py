@@ -3,7 +3,7 @@ import random
 class Elevator(object):
     def __init__(self):
         self.current_floor = 1 # on start stage elevator strts from 1st floor
-        self.max_floor = random.randint(5, 10)
+        self.max_floor = random.randint(5, 20)
         self.capacity = 5
         self.free_space = self.capacity
         self.destination = 2 # by default destination is the next floor
@@ -45,11 +45,8 @@ def up_or_down(destination_list, current_floor):
         destination_list = sorted(passanger_out(destination_list, current_floor))
     else:
         destination_list = sorted(destination_list)
-    print(destination_list)
     dawn_list = [x for x in destination_list if x < current_floor]
-    print(dawn_list)
     up_list = [x for x in destination_list if x > current_floor]
-    print(up_list)
     if len(dawn_list) > len(up_list):
         elevator_status.set_direction('Down')
     elif len(dawn_list) < len(up_list):
@@ -67,12 +64,6 @@ def up_or_down(destination_list, current_floor):
         
     return elevator_status.direction
     
-elevator_status = Elevator()
-passangers = Passanger(elevator_status.max_floor)
-
-print('Max Floor', elevator_status.max_floor)
-
-
 def elevator_simulation(arument):
     switcher = {
         'Up': elevator_go_up(),
@@ -82,33 +73,35 @@ def elevator_simulation(arument):
 
 def elevator_go_up():
     while elevator_status.current_floor <= elevator_status.destination:
+        
         #elevator arrives to a new floor(or start moving)
         print((elevator_status.current_floor == elevator_status.destination))
         passangers = Passanger(elevator_status.max_floor)
         print('Current Floor', elevator_status.current_floor)
-        print('Free before', elevator_status.free_space)
+        # passangers leave elevetor
         elevator_status.passanger_in_elevator = passanger_out(elevator_status.passanger_in_elevator, elevator_status.current_floor)
-        print('Passangers in elevator 1', elevator_status.passanger_in_elevator)
         #checks passangers on the floor waitng for an elevator( how many and what floor they want to go)
         print('Passanger number on the floor', passangers.passanger_waiting)
+        print(passangers.destination_list)
         if passangers.passanger_waiting > 0:
             #selects only who goes up
             passanger_going_up = [x for x in passangers.destination_list if x > elevator_status.current_floor]
             print('Destination list', passanger_going_up)
-            # passangers enter elevator(first come firs in)
+            # passangers enter elevator(first come first in)
             elevator_status.passanger_in_elevator = passanger_in(elevator_status.passanger_in_elevator, passanger_going_up)
-            print('Passangers in elevator 2', elevator_status.passanger_in_elevator)
-            
+            print('Passangers in elevator', elevator_status.passanger_in_elevator)
+            # checks avalible room for new passangers
             elevator_status.free_space = elevator_status.capacity - len(elevator_status.passanger_in_elevator)
-            print('Free after', elevator_status.free_space)
+            print('Free room after new passangers entered', elevator_status.free_space)
             if elevator_status.destination < max(passangers.destination_list):
                 elevator_status.destination = max(passangers.destination_list)
-            print('Destination',elevator_status.destination)
-            
+            print('Destination floor',elevator_status.destination)
+            # checkes if elevetor reached the last froor destination
             if elevator_status.current_floor == elevator_status.destination:
                 print('Last Floor')
                 up_or_down(passangers.destination_list, elevator_status.current_floor)
             else:
+                # if its not a lst floor it goes up
                 elevator_status.current_floor +=1
         else:
             print('No passangers')
@@ -119,9 +112,8 @@ def elevator_go_dawn():
         print((elevator_status.current_floor == elevator_status.destination))
         passangers = Passanger(elevator_status.max_floor)
         print('Current Floor', elevator_status.current_floor)
-        print('Free before', elevator_status.free_space)
+        # passangers leave elevetor
         elevator_status.passanger_in_elevator = passanger_out(elevator_status.passanger_in_elevator, elevator_status.current_floor)
-        print('Passangers in elevator 1', elevator_status.passanger_in_elevator)
         #checks passangers on the floor waitng for an elevator( how many and what floor they want to go)
         print('Passanger number on the floor', passangers.passanger_waiting)
         #selects only who goes down
@@ -129,17 +121,24 @@ def elevator_go_dawn():
         print('Destination list', passanger_going_down_list)
         # passangers enter elevator(first come firs in)
         elevator_status.passanger_in_elevator = passanger_in(elevator_status.passanger_in_elevator, passanger_going_down_list)
-        print('Passangers in elevator 2', elevator_status.passanger_in_elevator)
-        
+        print('Passangers in elevator', elevator_status.passanger_in_elevator)
+        # checks avalible room for new passangers
         elevator_status.free_space = elevator_status.capacity - len(elevator_status.passanger_in_elevator)
-        print('Free after', elevator_status.free_space)
-        # selects the highest floor passanger wants to go as a elevator final destination
+        print('Free room after new passangers entered', elevator_status.free_space)
+        # selects the lowest floor passanger wants to go as a elevator's final destination
         if elevator_status.destination > min(passangers.destination_list):
             elevator_status.destination = min(passangers.destination_list)
-        print('Destination',elevator_status.destination)
-        elevator_status.current_floor -=1
+        print('Destination floor',elevator_status.destination)
+         # checkes if elevetor reached the last froor destination
         if elevator_status.current_floor == elevator_status.destination:
             print('First Floor')
             up_or_down(passangers.destination_list, elevator_status.current_floor)
+        else:
+            elevator_status.current_floor -=1
             
+elevator_status = Elevator()
+passangers = Passanger(elevator_status.max_floor)
+
+print('Max Floor', elevator_status.max_floor)
+
 elevator_simulation(elevator_status.direction)
