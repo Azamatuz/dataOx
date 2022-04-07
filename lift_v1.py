@@ -15,7 +15,7 @@ class Floor(object):
         self.passangers_number_wating = int
         self.destination_list = []
     def set_floor(self, max_floor, current_floor):
-        
+        self.current_floor_list = [current_floor]
         self.passangers_number_wating = random.randint(0, 10)
         self.destination_list = [i for i in [random.randint(1, max_floor) for i in range(self.passangers_number_wating)] if i not in current_floor]
         return self
@@ -45,7 +45,8 @@ up_floor = up_direction(elevator_status.top_floor)
 print('Top Floor', elevator_status.top_floor)
 for i in range(elevator_status.top_floor):
     locals()[num2words(i)] = Floor()
-    locals()[num2words(i)].set_floor(elevator_status.top_floor, elevator_status.current_floor)
+    ignor_floor = [i+1]
+    locals()[num2words(i)].set_floor(elevator_status.top_floor, ignor_floor)
     print(locals()[num2words(i)].destination_list)
     
 while elevator_status.current_floor <= elevator_status.top_floor:
